@@ -31,15 +31,11 @@ def get_proposal_matrix(M):
     return Q
 
 # Рішення, чи приймати пропозицію
-def proposal(i, j, a, v):
-
-    alpha = min((i ** a) / (j ** a), 1)
-    v = np.random.default_rng().uniform(0, 1)
+def proposal(alpha, i, j):
+    v = gen_uniform(0, 1)
     
-    if v <= alpha:
-        return j
-    elif v > alpha:
-        return i
+    if v <= alpha: return j
+    elif v > alpha: return i
 
 # Генерація початкового розподілу ланцюга Маркова
 def initial_distribution(N, epsilon=0.01):
