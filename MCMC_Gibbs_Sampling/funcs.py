@@ -37,3 +37,4 @@ def proposal(alpha, i, j):
     
     if v <= alpha: return j
     elif v > alpha: return i
+

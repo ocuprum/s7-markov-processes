@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import beta
 from MarkovChain import MarkovChain, find_distribution
+from ColorGraph import ColorGraph, get_colorings
 
 '''
 # -------TASK 1---------
@@ -105,6 +106,7 @@ for gr in range(3):
           fig.savefig('task_3_prts_{}_n_{}_a_{}_b_{}.png'.format(parts, n, a, b))
 '''
 
+'''
 # -------TASK 4---------
 y = 3
 mu = 0
@@ -161,3 +163,39 @@ for d in [0.1, 1, 100]:
           ax.legend(loc='best', prop={'size': 6})
           fig.savefig('task_4_k_{}.png'.format(parts, k))
 fig1.savefig('task_4_dif_d')
+'''
+
+# -------TASK 5---------
+N = 10000
+
+# k = 3
+V = range(10)
+V_color = ['green', 'blue', 'yellow', 'blue', 'yellow', 
+           'green', 'yellow', 'green', 'blue', 'blue']
+colors = ['green', 'blue', 'yellow']
+E = [[1], [0, 2, 5], [1, 3], [2, 4], [3, 5, 8, 9], 
+     [1, 4, 6, 8], [5], [8], [4, 5, 7], [4]]
+
+cg = ColorGraph(V, V_color, colors, E)
+
+C, frequency = get_colorings(cg, N)
+print("Кількість різних розфарбовок при кількості кольорів {}: {}".format(len(colors), C))
+
+fig, axs = plt.subplots(2, 1)
+axs[0].plot(range(len(frequency)), frequency, color='pink', label='k = {}'.format(len(colors)))
+
+# k = 4
+V_color = ['pink', 'yellow', 'pink', 'blue', 'yellow', 
+           'green', 'pink', 'green', 'blue', 'pink']
+colors = ['green', 'blue', 'yellow', 'pink']
+
+cg = ColorGraph(V, V_color, colors, E)
+
+C, frequency = get_colorings(cg, N)
+print("Кількість різних розфарбовок при кількості кольорів {}: {}".format(len(colors), C))
+axs[1].plot(range(len(frequency)), frequency, color='violet', linewidth=0.3, label='k = {}'.format(len(colors)))
+
+axs[0].set_title('Частоти виникнень різних станів-розфарбовок\n(стани пронумеровані у порядку їх виникнення при генеруванні нових розфарбовок)', fontdict={'fontsize': 9})
+axs[0].legend(loc='best', prop={'size': 6})
+axs[1].legend(loc='best', prop={'size': 6})
+fig.savefig('task_5'.format(len(colors)))
