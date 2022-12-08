@@ -2,14 +2,15 @@ import numpy as np
 from funcs import gen_uniform, gen_integer, proposal
 
 in_interval = lambda u, a, b: 1 if a <= u < b else 0
+interval_part = lambda N, a, b: (b - a) / N
 
 class MarkovChain:
-    def __init__(self, transition):
+    def __init__(self, transition, beta=None):
         self.transition = transition
-        self.size = len(self.transition)
+        self.size = len(self.transition) if transition is not None else None
         self.time = 0
-        self.x = gen_integer(0, self.size)
-        self.__get_distances()
+        self.x = gen_uniform(0, 1) if beta else gen_integer(0, self.size)
+        if transition is not None: self.__get_distances()
         print('x_start = {}'.format(self.x))
 
     def __get_distances(self):
@@ -47,7 +48,7 @@ class MarkovChain:
                 else:
                     self.transition[i, j] = self.proposal[i, j] * self.alphas[i, j]
 
-    def next(self, type: str, a=None):
+    def next(self, type: str, a=None, b=None):
         if type == 'psi':
             self.x = self.__psi()
         elif type == 'zipf':
@@ -63,23 +64,45 @@ class MarkovChain:
                 self.x = proposal(alpha, i, j)
 
             self.__get_transition_matrix()
+        elif type == 'beta':
+            u = gen_uniform(0, 1)
+            fy = lambda y, a, b: (y ** (a - 1)) * ((1 - y) ** (b - 1))
+            fu_div_fx =  fy(u, a, b) / fy(self.x, a, b)
+            alpha = min([fu_div_fx, 1])
+            self.x = proposal(alpha, self.x, u)
 
         self.time += 1
         return self.x
 
 # Пошук частот, наближених до інваріантного розподілу
-def find_distribution(mtrx, N, type, start=1000, a=None):
-    mchain = MarkovChain(mtrx)
-    distribution = [0] * mchain.size
-    for n in range(N + start):
-        x = mchain.next(type, a)
-        if n <= start: continue
-        distribution[x] += 1
-        if n in np.array([50, 250, 500, 1000, 10000, 99999]) + start:
-            print('N = {}, Результат: {}'.format(n - start, np.array([d / (n-start) for d in distribution]).round(3)))
-    
-    distribution = [d / N for d in distribution]
-    print('Матриця P:\n{}\n'.format(mchain.transition))
-    print('Перевірка pi * P: {}\n'.format(np.array(distribution) @ mchain.transition))
+def find_distribution(mtrx=None, N=1000, type=None, start=1000, a=None, b=None, parts=None):
+    if type == 'psi' or type == 'zipf':
+        mchain = MarkovChain(mtrx)
+        distribution = [0] * mchain.size
 
+        for n in range(N + start):
+            x = mchain.next(type, a)
+            if n <= start: continue
+            distribution[x] += 1
+            if n in np.array([50, 250, 500, 1000, 10000, 100000]) + start:
+                print('N = {}, Результат: {}'.format(n - start, np.array([d / (n-start) for d in distribution]).round(3)))
+
+        distribution = [d / N for d in distribution]
+
+    elif type == 'beta':
+        mchain = MarkovChain(transition=None, beta=True)
+        distribution = {}
+
+        part = interval_part(parts, 0, 1)
+        for i in range(N + start):
+            x = mchain.next(type, a=a, b=b)
+            if i <= start: continue
+            for j in range(parts):
+                start = j * part
+                if in_interval(x, start, start + part):
+                    distribution[start] = distribution.get(start, 0) + 1
+                    break
+
+        distribution = {k: v / N for k, v in distribution.items()}
+    
     return distribution

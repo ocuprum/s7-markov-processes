@@ -1,6 +1,7 @@
 import funcs as f 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import beta
 from MarkovChain import MarkovChain, find_distribution
 
 '''
@@ -21,7 +22,7 @@ for _ in range(3):
      find_distribution(P, N=100000, type='psi')
 '''
 
-
+'''
 # -------TASK 2---------
 for k in range(3):
      choice = np.random.choice([0, 1])
@@ -63,3 +64,41 @@ for k in range(3):
           axs[i, j].set_title(title, fontdict={'fontsize': 9})
           axs[i, j].legend()
      fig.savefig('task_2_{}.png'.format(k))
+'''
+
+# -------TASK 3---------
+for gr in range(3):
+     if gr == 0: a, b = (0.5, 0.5)
+     if gr == 1: a, b = (6, 8)
+     if gr == 2: a, b = (4, 2)
+
+     for parts in [25, 100, 1000]:
+
+          fig, axs = plt.subplots(2, 2, layout='constrained')
+          for n in [100, 1000, 10000]:
+               if n == 100: i, j = 0, 0
+               elif n == 1000: i, j = 0, 1
+               elif n == 10000: i, j = 1, 0
+
+               distribution = find_distribution(N=n, type='beta', a=a, b=b, parts=parts)
+
+               X, Y = [], []
+               for key, value in sorted(distribution.items()):
+                    X.append(key)
+                    Y.append(value)
+
+               rv = beta(a, b)
+               w = X[1] - X[0]
+
+               axs[i, j].set_ylim([0, max(Y)])
+               axs[i, j].bar(X, Y, width=w, color='violet', label='Змодельований розподіл')
+               title = 'a = {}, b = {}, parts = {}, N = {}'.format(a, b, parts, n)
+               axs[i, j].set_title(title, fontdict={'fontsize': 9})
+               axs[i, j].legend()
+          i, j = 1, 1
+          x = np.linspace(0, 1)
+          axs[i, j].plot(x, rv.pdf(x), color='black', label='Beta-розподіл')
+          title = 'a = {}, b = {}'.format(a, b)
+          axs[i, j].set_title(title, fontdict={'fontsize': 9})
+          axs[i, j].legend()
+          fig.savefig('task_3_prts_{}_n_{}_a_{}_b_{}.png'.format(parts, n, a, b))
