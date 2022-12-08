@@ -4,6 +4,8 @@ rng = np.random.default_rng()
 gen_uniform = lambda a, b: rng.uniform(a, b)
 gen_integer = lambda a, b: rng.integers(a, b)
 gen_normal = lambda mu, std: rng.normal(mu, std)
+gen_beta = lambda a, b: rng.beta(a, b)
+gen_poiss = lambda l: rng.poisson(l)
 
 # Обчислення елементів інваріантного розподілу
 def get_stationary_dist(transition, iters=50):
@@ -37,4 +39,3 @@ def proposal(alpha, i, j):
     
     if v <= alpha: return j
     elif v > alpha: return i
-

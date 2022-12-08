@@ -165,6 +165,7 @@ for d in [0.1, 1, 100]:
 fig1.savefig('task_4_dif_d')
 '''
 
+'''
 # -------TASK 5---------
 N = 10000
 
@@ -199,3 +200,36 @@ axs[0].set_title('Частоти виникнень різних станів-р
 axs[0].legend(loc='best', prop={'size': 6})
 axs[1].legend(loc='best', prop={'size': 6})
 fig.savefig('task_5'.format(len(colors)))
+'''
+
+# -------TASK 6---------
+
+l = 10
+a, b = 1, 1
+x = 7
+k = 10000
+
+n = f.gen_integer(x, x + 10)
+
+P, N, P_apost, N_apost = [], [], {}, {}
+for _ in range(k):
+     p = np.round(f.gen_beta(x + a, n - x + b), 2)
+     y = f.gen_poiss(l * (1 - p))
+     n = x + y
+
+     P.append(p)
+     P_apost[p] = P_apost.get(p, 0) + 1
+     N_apost[n] = N_apost.get(n, 0) + 1
+
+P_apost = {p: value / k for p, value in sorted(P_apost.items())}
+N_apost = {n: value / k for n, value in sorted(N_apost.items())}
+
+fig, axs = plt.subplots(2, 1, layout='constrained')
+plt.xticks(range(x-1, max(N_apost.keys()), 1))
+axs[0].bar(P_apost.keys(), P_apost.values(), width=0.01, color='pink')
+axs[0].set_title('Апостеріорний розподіл p', fontdict={'fontsize': 10})
+axs[1].bar(N_apost.keys(), N_apost.values(), color='violet')
+axs[1].set_title('Апостеріорний розподіл N', fontdict={'fontsize': 10})
+fig.savefig('task_6.png')
+
+print('Оцінка p як вибіркового середнього отриманої вибірки: {}'.format(np.mean(P)))
