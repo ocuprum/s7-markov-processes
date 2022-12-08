@@ -66,6 +66,7 @@ for k in range(3):
      fig.savefig('task_2_{}.png'.format(k))
 '''
 
+'''
 # -------TASK 3---------
 for gr in range(3):
      if gr == 0: a, b = (0.5, 0.5)
@@ -102,3 +103,61 @@ for gr in range(3):
           axs[i, j].set_title(title, fontdict={'fontsize': 9})
           axs[i, j].legend()
           fig.savefig('task_3_prts_{}_n_{}_a_{}_b_{}.png'.format(parts, n, a, b))
+'''
+
+# -------TASK 4---------
+y = 3
+mu = 0
+sigma = 1
+tau = 2
+d = 1
+k = 10000
+parts = 1000
+
+
+fig1, axs1 = plt.subplots(3, 1)
+for d in [0.1, 1, 100]:
+     if d == 0.1: 
+          g = 0 
+          color = 'blue'
+     elif d == 1: 
+          g = 1
+          color = 'pink'
+     elif d == 100: 
+          g = 2
+          color = 'violet'
+
+     distribution, chain = find_distribution(N=k, type='apost', d=d, y=y, mu=mu, sigma=sigma, tau=tau, parts=parts)
+
+     X = range(len(chain))
+     axs1[g].plot(X, chain, color=color, linewidth=0.4, label='d = {}'.format(d))
+     axs1[g].set_xlabel('n')
+     axs1[g].set_ylabel('X_n')
+     axs1[g].legend(loc='best', prop={'size': 8})
+
+     if d == 1:
+          fig, ax = plt.subplots()
+          X, Y = [], []
+          for key, value in sorted(distribution.items()):
+               X.append(key)
+               Y.append(value)
+
+          w = X[1] - X[0]
+
+          tmu, tsigma = 2.4, 0.8
+          mu, sigma = np.mean(chain).round(4), np.std(chain)
+
+          ax.set_ylim([0, 0.6])
+          count, bins, ignored = plt.hist(chain, 100, density=True, color='grey', alpha=0.4, label='Змодельований розподіл')
+          ax.plot(bins, 1/(sigma * np.sqrt(2 * np.pi)) *
+                    np.exp( - (bins - mu)**2 / (2 * sigma**2) ),
+          linewidth=2, color='blue', label='Змодельований розподіл: mu = {}, sigma^2 = {}'.format(mu, np.var(chain).round(4)))
+          ax.plot(bins, 1/(tsigma * np.sqrt(2 * np.pi)) *
+                    np.exp( - (bins - tmu)**2 / (2 * tsigma**2) ),
+          linewidth=2, color='violet', label='Теоретичний розподіл: mu = {}, sigma^2 = {}'.format(tmu, tsigma))
+          
+          title = 'k = {}'.format(k)
+          ax.set_title(title)
+          ax.legend(loc='best', prop={'size': 6})
+          fig.savefig('task_4_k_{}.png'.format(parts, k))
+fig1.savefig('task_4_dif_d')

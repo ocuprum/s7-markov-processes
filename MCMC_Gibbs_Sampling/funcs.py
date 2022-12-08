@@ -3,6 +3,7 @@ import numpy as np
 rng = np.random.default_rng()
 gen_uniform = lambda a, b: rng.uniform(a, b)
 gen_integer = lambda a, b: rng.integers(a, b)
+gen_normal = lambda mu, std: rng.normal(mu, std)
 
 # Обчислення елементів інваріантного розподілу
 def get_stationary_dist(transition, iters=50):
@@ -36,14 +37,3 @@ def proposal(alpha, i, j):
     
     if v <= alpha: return j
     elif v > alpha: return i
-
-# Генерація початкового розподілу ланцюга Маркова
-def initial_distribution(N, epsilon=0.01):
-    start = 1 / N
-    distribution = [0] * N
-
-    for i in range(N-1):
-        distribution[i] = round(gen_uniform(start - epsilon, start), 3)
-    distribution[-1] = 1 - sum(distribution[:-1])
-
-    return distribution
