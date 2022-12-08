@@ -5,7 +5,7 @@ from scipy.stats import beta
 from MarkovChain import MarkovChain, find_distribution
 from ColorGraph import ColorGraph, get_colorings
 
-'''
+print('\n-------------------TASK 1-------------------')
 # -------TASK 1---------
 N = 1000
 
@@ -21,9 +21,9 @@ print('Інваріантний розподіл матриці P:{}'.format(the
 
 for _ in range(3):
      find_distribution(P, N=100000, type='psi')
-'''
 
-'''
+
+print('\n-------------------TASK 2-------------------')
 # -------TASK 2---------
 for k in range(3):
      choice = np.random.choice([0, 1])
@@ -50,6 +50,7 @@ for k in range(3):
                return distribution
 
           zipf = zipf(M, a)
+          print('M = {}, a = {}, N = {}'.format(M, a, n))
           print('zipf: {}'.format(zipf))
 
           X = list(range(1, M+1))
@@ -65,9 +66,10 @@ for k in range(3):
           axs[i, j].set_title(title, fontdict={'fontsize': 9})
           axs[i, j].legend()
      fig.savefig('task_2_{}.png'.format(k))
-'''
 
-'''
+
+print('\n-------------------TASK 3-------------------')
+print('result -> png')
 # -------TASK 3---------
 for gr in range(3):
      if gr == 0: a, b = (0.5, 0.5)
@@ -104,9 +106,9 @@ for gr in range(3):
           axs[i, j].set_title(title, fontdict={'fontsize': 9})
           axs[i, j].legend()
           fig.savefig('task_3_prts_{}_n_{}_a_{}_b_{}.png'.format(parts, n, a, b))
-'''
 
-'''
+print('\n-------------------TASK 4-------------------')
+print('result -> png')
 # -------TASK 4---------
 y = 3
 mu = 0
@@ -163,9 +165,9 @@ for d in [0.1, 1, 100]:
           ax.legend(loc='best', prop={'size': 6})
           fig.savefig('task_4_k_{}.png'.format(parts, k))
 fig1.savefig('task_4_dif_d')
-'''
 
-'''
+
+print('\n-------------------TASK 5-------------------')
 # -------TASK 5---------
 N = 10000
 
@@ -200,8 +202,9 @@ axs[0].set_title('Частоти виникнень різних станів-р
 axs[0].legend(loc='best', prop={'size': 6})
 axs[1].legend(loc='best', prop={'size': 6})
 fig.savefig('task_5'.format(len(colors)))
-'''
 
+
+print('\n-------------------TASK 6-------------------')
 # -------TASK 6---------
 
 l = 10

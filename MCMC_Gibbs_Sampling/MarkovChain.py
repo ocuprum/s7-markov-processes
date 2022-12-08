@@ -16,7 +16,7 @@ class MarkovChain:
         else:
             self.x = gen_integer(0, self.size)
         if transition is not None: self.__get_distances()
-        print('x_start = {}'.format(self.x))
+        if not beta and not apost: print('\nx_start = {}'.format(self.x))
 
     def __get_distances(self):
         self.D = [[0 for _ in range(self.size)] for _ in range(self.size)]
@@ -100,7 +100,7 @@ def find_distribution(mtrx=None, N=1000, type=None, start=1000, a=None, b=None, 
             x = mchain.next(type, a)
             if n <= start: continue
             distribution[x] += 1
-            if n in np.array([50, 250, 500, 1000, 10000, 100000]) + start:
+            if n in np.array([50, 250, 500, 1000, 10000, 100000]) + start and type == 'psi':
                 print('N = {}, Результат: {}'.format(n - start, np.array([d / (n-start) for d in distribution]).round(3)))
 
         distribution = [d / N for d in distribution]
